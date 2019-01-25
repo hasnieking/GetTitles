@@ -20,11 +20,7 @@ void setuparray(char title[]) {
 }
 
 //test for the combination of chars that makes title="
-bool testfortitle(ifstream &input, char &kar) {
-	char title[7];
-	setuparray(title);
-
-
+bool testfortitle(ifstream &input, char &kar, char title[]) {
 	for (int i = 0; i <= 6; i++) {
 		if (title[i] != kar) {
 			return false;
@@ -58,10 +54,19 @@ void copytitle(ifstream &input, ofstream &output, string filenameout, char &kar)
 }
 
 int main() {
-	//gets filename
+	//file in
 	string filenamein;
 	cout << "Input File: ";
 	cin >> filenamein;
+
+	//tests if file exists
+	ifstream fileexists(filenamein.c_str());
+	if (!fileexists) {
+		cout << "Error: " << filenamein << " does not exist." << endl;
+		return 1;
+	}
+
+	//file out
 	string filenameout;
 	cout << "Output File: ";
 	cin >> filenameout;
@@ -70,7 +75,6 @@ int main() {
 	ifstream input;
 	input.open(filenamein.c_str(), ios::in);
 	ofstream output; 
-
 	//gets first character of input file
 	char kar;
 	kar = input.get();
@@ -78,15 +82,17 @@ int main() {
 	cout << kar << endl;
 
 	//deletes old output file when it exists
-	if (!input.eof()) {
-		output.open(filenameout.c_str(), ios::trunc);
-		output.close();
-	}
+	output.open(filenameout.c_str(), ios::trunc);
+	output.close();
+
+	//makes the title array
+	char title[7];
+	setuparray(title);
 
 	//tests for the letter t, when found tests for title and then copies
 	while (!input.eof()) {
 		if (kar == 't') {
-			if (testfortitle(input, kar)) {
+			if (testfortitle(input, kar, title)) {
 				copytitle(input, output, filenameout, kar);
 			}
 		}
@@ -94,6 +100,7 @@ int main() {
 			kar = input.get();
 		}
 	}
+	//closes input file
 	input.close();
 	return 0;
 }
